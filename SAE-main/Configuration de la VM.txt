@@ -1,0 +1,58 @@
+nano Saedjango/Saedjango/settings.py:
+
+ALLOWED_HOSTS = ['172.18.36.150']
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'admin_serveur',
+        'USER': 'toto',
+        'PASSWORD': 'toto',
+        'HOST': '172.18.32.1',
+        'PORT': '3306',
+    }
+}
+
+----------
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT= '/home/administrateur/Saedjango/sae/static/'
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'sae/media')
+
+----------
+
+///Permet d'accepter les coquies pour cette adresse///
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_COOKIE_DOMAIN = '172.18.36.150'
+CSRF_TRUSTED_ORIGINS =[
+        'http://172.18.36.150'
+]
+
+-------------------------------------------------------------------------------------------
+nano conf/gunicorn_config.py:
+
+command = '/home/administrateur/django_env/bin/gunicorn'
+pythonpath = '/home/administrateur/Saedjango'
+bind = '172.18.36.150:8000'
+workers = 3
+-------------------------------------------------------------------------------------------
+sudo nano /etc/nginx/sites-available/Saedjango:
+
+server {
+    listen 80;
+    server_name 172.18.36.150;
+
+location /static/ {
+    root /home/administrateur/static/;
+}
+
+location / {
+    proxy_pass http://172.18.36.150:8000;
+    }
+}
